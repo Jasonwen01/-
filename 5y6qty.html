@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>五运六气推演 (2026精准时间修正版)</title>
+    <style>
+        /* --- 全局样式 --- */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft YaHei", sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 15px;
+            color: #2c3e50;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        /* --- 控制面板 --- */
+        .control-panel {
+            background-color: #eaf2f8;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid #d6eaf8;
+        }
+
+        .year-select {
+            width: 100%;
+            max-width: 300px;
+            height: 44px;
+            padding: 0 15px;
+            font-size: 16px;
+            border: 1px solid #bdc3c7;
+            border-radius: 6px;
+            background-color: #fff;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+
+        /* --- 标题概览区 --- */
+        .summary-header {
+            text-align: center;
+            background: #fff8ea;
+            border: 1px solid #fceabb;
+            border-left: 5px solid #f39c12;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+            color: #d35400;
+            font-size: 20px;
+            font-weight: bold;
+            line-height: 1.5;
+            box-shadow: 0 2px 5px rgba(243, 156, 18, 0.1);
+        }
+
+        /* --- 表格样式 --- */
+        .section-header {
+            font-size: 17px;
+            font-weight: bold;
+            margin: 30px 0 12px 0;
+            padding-left: 12px;
+            border-left: 5px solid #3498db;
+            color: #34495e;
+        }
+        
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            background: #fff;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 900px; /* 保证手机横向滚动 */
+            font-size: 14px;
+        }
+
+        th, td {
+            padding: 14px 10px;
+            border: 1px solid #eee;
+            text-align: center;
+        }
+
+        th {
+            background-color: #34495e;
+            color: #fff;
+            font-weight: 500;
+        }
+
+        tr:nth-child(even) { background-color: #f9fbfd; }
+
+        /* 角色颜色 */
+        .role-host { color: #8e44ad; font-weight: bold; } /* 主气/主运 */
+        .role-guest { color: #c0392b; font-weight: bold; } /* 客气/客运 */
+        
+        /* 司天在泉高亮 */
+        .row-sitian { background-color: #fffde7 !important; }
+        .row-zaiquan { background-color: #e0f2f1 !important; }
+        
+        .tag {
+            display: inline-block;
+            font-size: 12px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 6px;
+            color: #fff;
+            font-weight: normal;
+        }
+        .tag-sitian { background-color: #f39c12; }
+        .tag-zaiquan { background-color: #009688; }
+
+        .date-sub {
+            display: block;
+            font-size: 12px;
+            color: #bdc3c7; 
+            margin-top: 5px;
+            font-weight: normal;
+        }
+        
+        .term-list {
+            font-size: 13px;
+            color: #555;
+            margin-top: 4px;
+        }
+        
+        .date-range {
+            display: block;
+            font-size: 12px;
+            color: #e67e22; /* 突出显示日期 */
+            margin-top: 3px;
+            font-weight: bold;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #95a5a6;
+            margin-top: 25px;
+            padding-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="control-panel">
+        <label for="yearSelect" style="font-weight:bold; margin-right:10px;">请选择年份：</label>
+        <select id="yearSelect" class="year-select">
+            </select>
+    </div>
+
+    <div id="resultArea">
+        <div id="mainTitle" class="summary-header"></div>
+
+        <div class="section-header">
+            五运推演 (73天05刻为一运)
+        </div>
+        <div class="table-responsive">
+            <table id="wuyunTable">
+                <thead>
+                    <tr>
+                        <th style="width:10%">运别</th>
+                        <th style="width:18%">初运<br><span class="date-sub">1.20 - 4.1</span></th>
+                        <th style="width:18%">二运<br><span class="date-sub">4.2 - 6.15</span></th>
+                        <th style="width:18%">三运<br><span class="date-sub">6.16 - 8.30</span></th>
+                        <th style="width:18%">四运<br><span class="date-sub">8.31 - 11.10</span></th>
+                        <th style="width:18%">终运<br><span class="date-sub">11.11 - 1.19</span></th>
+                    </tr>
+                </thead>
+                <tbody id="wuyunBody">
+                    </tbody>
+            </table>
+        </div>
+
+        <div class="section-header">
+            六气推演 (60天87刻半为一气)
+        </div>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width:35%">节气与时间</th>
+                        <th style="width:15%">主气 (地)</th>
+                        <th style="width:20%">客气 (天)</th>
+                        <th style="width:30%">气机分析</th>
+                    </tr>
+                </thead>
+                <tbody id="liuqiBody">
+                    </tbody>
+            </table>
+        </div>
+        
+        <div class="footer">注：手机端请左右滑动表格查看完整内容</div>
+    </div>
+</div>
+
+<script>
+    // === 基础数据字典 ===
+    const TIAN_GAN = ["庚", "辛", "壬", "癸", "甲", "乙", "丙", "丁", "戊", "己"]; // 0-9
+    const DI_ZHI = ["申", "酉", "戌", "亥", "子", "丑", "寅", "卯", "辰", "巳", "午", "未"]; // 0-11
+    const ZODIAC = ["猴", "鸡", "狗", "猪", "鼠", "牛", "虎", "兔", "龙", "蛇", "马", "羊"]; 
+
+    // 岁运信息
+    const YUN_INFO = {
+        "甲": { wuxing: "土", display: "土运太过（雨湿流行）" },
+        "己": { wuxing: "土", display: "土运不及（风气乃行）" },
+        "乙": { wuxing: "金", display: "金运不及（炎火乃行）" },
+        "庚": { wuxing: "金", display: "金运太过（燥气流行）" },
+        "丙": { wuxing: "水", display: "水运太过（寒气流行）" },
+        "辛": { wuxing: "水", display: "水运不及（湿气乃行）" },
+        "丁": { wuxing: "木", display: "木运不及（燥金乃行）" },
+        "壬": { wuxing: "木", display: "木运太过（风气流行）" },
+        "戊": { wuxing: "火", display: "火运太过（炎暑流行）" },
+        "癸": { wuxing: "火", display: "火运不及（寒气乃行）" }
+    };
+
+    // 五行序列
+    const WUXING_SEQ = ["木", "火", "土", "金", "水"];
+    
+    // 五运显示名称
+    const WUYUN_DISPLAY = {
+        "木": "木运（风）",
+        "火": "火运（热）",
+        "土": "土运（湿）",
+        "金": "金运（燥）",
+        "水": "水运（寒）"
+    };
+
+    // 24节气名称
+    const SOLAR_TERMS_GROUP = [
+        ["大寒", "立春", "雨水", "惊蛰"], 
+        ["春分", "清明", "谷雨", "立夏"], 
+        ["小满", "芒种", "夏至", "小暑"], 
+        ["大暑", "立秋", "处暑", "白露"], 
+        ["秋分", "寒露", "霜降", "立冬"], 
+        ["小雪", "大雪", "冬至", "小寒"]  
+    ];
+
+    // 六气日期 (修正版：结束日期 = 下一步气开始日期 - 1天)
+    // 2026年节气: 春分3.20, 小满5.21, 大暑7.23, 秋分9.23, 小雪11.22
+    const QI_DATES_FIXED = [
+        "1月20日 - 3月19日",  // 初之气
+        "3月20日 - 5月20日",  // 二之气
+        "5月21日 - 7月22日",  // 三之气
+        "7月23日 - 9月22日",  // 四之气
+        "9月23日 - 11月21日", // 五之气
+        "11月22日 - 1月19日"  // 终之气
+    ];
+
+    // 六气序列
+    const KE_QI_SEQ = ["厥阴风木", "少阴君火", "太阴湿土", "少阳相火", "阳明燥金", "太阳寒水"];
+    const ZHU_QI_SEQ = ["厥阴风木", "少阴君火", "少阳相火", "太阴湿土", "阳明燥金", "太阳寒水"];
+
+    // === 初始化 ===
+    document.addEventListener('DOMContentLoaded', function() {
+        const select = document.getElementById('yearSelect');
+        const currentYear = new Date().getFullYear();
+
+        // 填充下拉框
+        for (let y = currentYear - 60; y <= currentYear + 60; y++) {
+            let option = document.createElement('option');
+            option.value = y;
+            option.text = y + "年";
+            if (y === 2026) option.selected = true; 
+            else if (y === currentYear && currentYear !== 2026) option.selected = true;
+            select.add(option);
+        }
+
+        select.addEventListener('change', generateTable);
+        generateTable(); // 首次运行
+    });
+
+    // === 核心逻辑 ===
+    function generateTable() {
+        const year = parseInt(document.getElementById('yearSelect').value);
+        if (!year) return;
+
+        // 1. 计算干支
+        const ganIndex = year % 10;
+        const zhiIndex = year % 12;
+        const gan = TIAN_GAN[ganIndex];
+        const zhi = DI_ZHI[zhiIndex];
+        const zodiac = ZODIAC[zhiIndex];
+
+        // 2. 获取岁运信息
+        const yun = YUN_INFO[gan];
+
+        // 3. 设置标题
+        document.getElementById('mainTitle').innerText = 
+            `${gan}${zhi}年(${year})${zodiac}年五运六气推演，${yun.display}`;
+
+        // 4. 生成五运表
+        const wuxingStartIdx = WUXING_SEQ.indexOf(yun.wuxing);
+        
+        let rowHost = "<tr><td style='font-weight:bold'>主运</td>";
+        let rowGuest = "<tr><td style='font-weight:bold'>客运</td>";
+
+        for (let i = 0; i < 5; i++) {
+            // 主运固定：木火土金水
+            let hName = WUYUN_DISPLAY[WUXING_SEQ[i]];
+            // 客运：按中运开始
+            let gIdx = (wuxingStartIdx + i) % 5;
+            let gName = WUYUN_DISPLAY[WUXING_SEQ[gIdx]];
+
+            rowHost += `<td class="role-host">${hName}</td>`;
+            rowGuest += `<td class="role-guest">${gName}</td>`;
+        }
+        rowHost += "</tr>";
+        rowGuest += "</tr>";
+        document.getElementById('wuyunBody').innerHTML = rowHost + rowGuest;
+
+        // 5. 生成六气表
+        let sitianIdx = -1;
+        if (["子", "午"].includes(zhi)) sitianIdx = 1; // 少阴
+        else if (["丑", "未"].includes(zhi)) sitianIdx = 2; // 太阴
+        else if (["寅", "申"].includes(zhi)) sitianIdx = 3; // 少阳
+        else if (["卯", "酉"].includes(zhi)) sitianIdx = 4; // 阳明
+        else if (["辰", "戌"].includes(zhi)) sitianIdx = 5; // 太阳
+        else if (["巳", "亥"].includes(zhi)) sitianIdx = 0; // 厥阴
+
+        let startGuestIdx = sitianIdx - 2;
+        if (startGuestIdx < 0) startGuestIdx += 6;
+
+        let htmlLiuqi = "";
+        const stepNames = ["初之气", "二之气", "三之气", "四之气", "五之气", "终之气"];
+
+        for (let i = 0; i < 6; i++) {
+            let terms = SOLAR_TERMS_GROUP[i].join("、");
+            let dateRange = QI_DATES_FIXED[i]; // 使用修正后的时间数组
+
+            let termDisplay = `
+                <span style="font-weight:bold; color:#333;">${year}年${stepNames[i]}</span>
+                <div class="term-list">${terms}</div>
+                <span class="date-range">(${dateRange})</span>
+            `;
+
+            let hostName = ZHU_QI_SEQ[i];
+            let guestIdx = (startGuestIdx + i) % 6;
+            let guestName = KE_QI_SEQ[guestIdx];
+
+            let rowClass = "";
+            let tag = "";
+            if (i === 2) {
+                rowClass = "row-sitian";
+                tag = "<span class='tag tag-sitian'>司天</span>";
+            } else if (i === 5) {
+                rowClass = "row-zaiquan";
+                tag = "<span class='tag tag-zaiquan'>在泉</span>";
+            }
+
+            let analysis = analyzeRelation(hostName, guestName);
+
+            htmlLiuqi += `
+                <tr class="${rowClass}">
+                    <td style="text-align:left; padding-left:15px;">${termDisplay}</td>
+                    <td class="role-host">${hostName}</td>
+                    <td class="role-guest">${guestName}${tag}</td>
+                    <td>${analysis}</td>
+                </tr>
+            `;
+        }
+        document.getElementById('liuqiBody').innerHTML = htmlLiuqi;
+    }
+
+    // 辅助：生克判断
+    function analyzeRelation(host, guest) {
+        let h = getWuXing(host);
+        let g = getWuXing(guest);
+        if (h === g) return "同气相求（平）";
+        if (isSheng(g, h)) return "客生主（顺）";
+        if (isSheng(h, g)) return "主生客（小顺）";
+        if (isKe(g, h)) return "客克主（天刑地）"; 
+        if (isKe(h, g)) return "主克客（地刑天）";
+        return "";
+    }
+
+    function getWuXing(name) {
+        if (name.includes("木")) return "木";
+        if (name.includes("火")) return "火";
+        if (name.includes("土")) return "土";
+        if (name.includes("金")) return "金";
+        if (name.includes("水")) return "水";
+        return "";
+    }
+
+    function isSheng(a, b) { // a生b
+        return (a==="木"&&b==="火") || (a==="火"&&b==="土") || (a==="土"&&b==="金") || (a==="金"&&b==="水") || (a==="水"&&b==="木");
+    }
+
+    function isKe(a, b) { // a克b
+        return (a==="木"&&b==="土") || (a==="土"&&b==="水") || (a==="水"&&b==="火") || (a==="火"&&b==="金") || (a==="金"&&b==="木");
+    }
+
+</script>
+
+</body>
+</html>
